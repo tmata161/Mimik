@@ -1,0 +1,72 @@
+Current Display -> LCD_2in_test
+
+#include files - LCD_TEST.H & LCD_2in.H
+
+Functions that can be used--
+
+1. DEV_Delay_ms(delay_time)
+2. printf("print to console")
+
+3. DEV_Module_Init(void)                            //must
+    initialized the communication protocol
+
+4.DEV_SET_PWM(value)                                //must
+    sets pwm signal needed for (serial) communication ; 50
+
+5.LCD_2IN_Init(HORIZONTAL/VERTICAL);
+    set up modes ; recommended to be kept in HORIZONTAL
+
+6.Paint_Clear(COLORS);
+    sets up background color eg: WHITE, BLACK etc
+
+7. LCD_2IN_Clear(COLORS)
+    init screen color
+
+8.LCD_2IN_SetBacklight(1-1023)
+    sets up backlight color                 //implementation questionable
+
+9.Paint_NewImage((uint8_t)* heap pointer, SCREEN_WIDTH, SCREEN HEIGHT, ROTATION ANGLE, COLORS)
+    Set up the memory for what to be displayed on the screen
+
+10.Paint_SetScale(value)
+    sets up scale -> 65
+
+11.Paint_SetRotate()
+    Sets screen rotation value -> 0, 90, 180, 270
+
+12.SET_Infrared_PIN()
+    Initializes display keys
+
+13.LCD_2IN_Display(* pointer)
+    Sends image buffer into the ram, [refresh the screen]
+
+14.DEV_Module_Exit(void)
+    exits the module
+
+15.free(*screen_pointer)
+    frees memory
+
+
+
+
+************PAINT FUNCTIONS**************
+
+1.Paint_DrawString_EN(X_Coordinate, Y_Coordinate, "String", Font_type, Set_foreground_color, Set_Background_color)
+    used to draw string
+
+2.DEV_Digital_Read(button value)
+    used to read keys
+
+3.Paint_DrawRectangle(X_Coordinate_Start, Y_Coordinate_Start, X_Coordinate_End, Y_Coordinate_End, COLORS, line_width_value->1, fill_the_color_value->0,1)
+    Used to draw rectangle
+
+4.Paint_DrawNum(X_Coordinate, Y_Coordinate, numerical_value, Font_type, Set_foreground_color, Set_Background_color)
+    draw number
+
+5.Paint_DrawPoint(X_Coordinate, Y_Coordinate, Point_color, Point_Size, Point_Style)
+    draws point
+
+6.Paint_DrawLine(X_Coordinate_Start, Y_Coordinate_Start, X_Coordinate_End, Y_Coordinate_End, COLORS, line_width_value->1, fill_the_color_value->0,1)
+    draws a line
+
+7.Paint_DrawCircle(X_Coordinate_Start, Y_Coordinate_Start, raidus, COLORS, line_width_value->1, fill_the_color_value->0,1)
