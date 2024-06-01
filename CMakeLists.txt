@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.13)
 include(pico_sdk_import.cmake)
-project(Pico-ducky)
+project(mimik)
 pico_sdk_init()
 
 
@@ -31,17 +31,17 @@ include_directories(./src/UI)
 
 
 
-add_executable(ducky-pie 
-ducky-pie.c
+add_executable(mimik
+mimik.c
 )
 
 # enable usb output, disable uart output
-pico_enable_stdio_uart(ducky-pie 1)
+pico_enable_stdio_uart(mimik 1)
 
-target_link_libraries(ducky-pie src LCD UI Infrared GUI Fonts Config pico_stdlib hardware_spi hardware_flash pico_multicore lfs USB tinyusb_device tinyusb_board)
+target_link_libraries(mimik src LCD UI Infrared GUI Fonts Config pico_stdlib hardware_spi hardware_flash pico_multicore lfs USB tinyusb_device tinyusb_board)
 #( LCD OLED Infrared Icm20948 GUI Fonts Config hardware_spi)
 
 # create map/bin/hex/uf2 file etc.
-pico_add_extra_outputs(ducky-pie)
+pico_add_extra_outputs(mimik)
 
 
