@@ -2,6 +2,8 @@
 #include "bootducky.h"
 #include "pico/multicore.h"
 
+// entry point
+
 void main(){
    stdio_init_all();
    printf("==========DUCK BOOT SUCCESSFUL🦆🦆=============\n");
@@ -12,6 +14,6 @@ void main(){
    int io = gpio_get(AUTO);
    
    //if(!io) USBMODE();
-   //else home_screen();
+    home_screen();
    
 }

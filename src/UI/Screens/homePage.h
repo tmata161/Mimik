@@ -3,8 +3,10 @@
 //show it on homePage
 #ifndef HOMEPAGE
 #define HOMEPAGE
-//this structure will contain the payload list that will get
+
+//structure will contain the payload list that will get
 //fetched from secondary storage
+//(only 7 payloads at a time)
 struct payloadFileList{
     char** payloadName; //will set to dynamic at default (file list size is not known)
     int payloadCount; //keeps track of no. of payload files
