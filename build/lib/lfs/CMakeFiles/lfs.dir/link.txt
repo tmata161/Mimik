@@ -1,2 +1,0 @@
-/usr/bin/arm-none-eabi-ar qc liblfs.a CMakeFiles/lfs.dir/lfs.c.obj
-/usr/bin/arm-none-eabi-ranlib liblfs.a
