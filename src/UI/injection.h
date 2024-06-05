@@ -1,3 +1,5 @@
 #include"UI.h"
 
-void entryInjection();
+typedef struct injection{
+    int userPointer;
+}injectionPage;

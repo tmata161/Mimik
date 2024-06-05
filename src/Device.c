@@ -6,7 +6,7 @@
 #include"UI/fileManager.h"
 
 const char demoFiles[][15] = {"demo1.mik", "demo2.mik", "demo3.mik", "demo4.mik", "demo5.mik", "demo6.mik", "demo7.mik", "demo8.mik", "demo9.mik", "demo10.mik", "demo11.mik", "demo12.mik", "demo13.mik", "demo14.mik", "demo15.mik", "demo16mik", "demo17.mik", "demo18.mik", "demo19.mik", "demo20.mik",};
-int fileNo=20;
+int fileNo=sizeof(demoFiles)/sizeof(demoFiles[0]);
 UWORD* ScreenBuffer;
 fileTrack ft;
 
@@ -29,7 +29,7 @@ void initScreen(){
     }
 
     // initializes pwm stuff
-    DEV_SET_PWM(50);
+    DEV_SET_PWM(100);
     // initializes the lcd
     LCD_1IN3_Init(HORIZONTAL);
     // clear screen
@@ -63,19 +63,26 @@ void drawBootLogo(){
 // argument-> index of file
 // return -> object of file list and number of files present in list
 fileTrack* fileTracker(int index){
-    for(int i=0; i<10 ; i++){
+    ft.totalFileCount=fileNo;
+    for(int i=0; i<FILECAP ; i++){
                 memset(ft.files[i], '0', 255);
     }
     ft.fileNo=0;
+    int indexCounter=0;
     //get number of files [if more than 10 return pack of 10 or else whole]
-    if(fileNo>10){ //is more than 10
-            for(int i=index ; i < ((index!=0) ? ((fileNo-index>10)?10:(fileNo-index)) : 10); i++){
-                memcpy(ft.files[i], demoFiles[i], 255);
+    if(fileNo>FILECAP){ //is more than 10
+            for(int i=index ; i < ((index!=0) ? ((fileNo-index>FILECAP)?FILECAP+index:fileNo) : FILECAP); i++){
+                memcpy(ft.files[indexCounter], demoFiles[i], 255);
                 ft.fileNo+=1;
+                indexCounter+=1;
             }
-            &ft; 
+           return &ft; 
     }
     else{ //is less or equal 10
+        for(int i=0; i<fileNo; i++){
+            memcpy(ft.files[i], demoFiles[i], 255);
+            ft.fileNo+=1;
+        }
         return &ft;
     }
 }

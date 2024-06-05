@@ -24,9 +24,11 @@
 #define SET 19 //aka X [setting page]
 #define ESC 21 //aka Y 
 
-#define JOYSTICK_UP 18
-#define JOYSTICK_DOWN 2
+#define JOYSTICK_UP 2
+#define JOYSTICK_DOWN 18
 #define SUBMIT LCD_1IN3_Display
+
+#define FILECAP 5
 
 //..............................
 // Custom Macro definition
@@ -37,15 +39,18 @@
 extern UWORD* ScreenBuffer;
 //---------------------------------------
 
-
-//----------Function Definition---------
-void master();
-//-----------------------------------
-
 //-----------Structure Declaration--------
 typedef struct tracker{
     char files[10][255];
     int fileNo;
+    int totalFileCount;
 }fileTrack;
+
+
+//----------Function Definition---------
+void master();
+fileTrack* fileTracker(int index);
+//-----------------------------------
+
 
 #endif

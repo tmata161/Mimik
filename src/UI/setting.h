@@ -6,4 +6,3 @@ typedef struct settingPage{
     int userPointer;
 }settingPage;
 
-void entrySetting();
