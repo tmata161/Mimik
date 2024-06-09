@@ -22,3 +22,8 @@ void drawMenuTray(){
 
     SUBMIT(ScreenBuffer);
 }
+
+//------------Global datatype definition----------------
+int themesLayout[]={CYAN, GREEN};
+int themeForegroundSelected[]={RED, MAGENTA};
+//------------Global datatype definition end----------------

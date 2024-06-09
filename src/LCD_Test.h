@@ -30,13 +30,13 @@
 #ifndef _LCD_TEST_H_
 #define _LCD_TEST_H_
 
-#include "DEV_Config.h"
-#include "GUI_Paint.h"
+#include "../lib/Config/DEV_Config.h"
+#include "../lib/GUI/GUI_Paint.h"
 #include "ImageData.h"
 #include "Debug.h"
 #include <stdlib.h> // malloc() free()
 
-#include "Infrared.h"
+#include "../lib/Infrared/Infrared.h"
 
 int OLED_1in3_C_test(void);
 int OLED_2in23_test(void); 

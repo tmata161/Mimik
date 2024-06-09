@@ -111,16 +111,18 @@ void parseFiles(int index){
 // draw file names
 void drawFileNames(){
     int height=20;
+    Paint_DrawRectangle(45+5, 10+5, SCREEN_HEIGHT-5, SCREEN_WIDTH-5, BACKGROUND , DOT_PIXEL_1X1, DRAW_FILL_FULL);
     for(int i=0; i<FILECAP; i++){
         //Paint_DrawRectangle(50, height, SCREEN_WIDTH, height+30, (fM.userPointer==i)?THEME_SELECTEDBOX:BACKGROUND, DOT_PIXEL_1X1, (fM.userPointer==i)?DRAW_FILL_FULL:DRAW_FILL_EMPTY);
-        Paint_DrawString_EN(55, height, fM.fileNameList[i], &Font20, (fM.userPointer==i)?FOREGROUND_SELECTED:FORGROUND, BACKGROUND);
+        Paint_DrawString_EN(55, height, fM.fileNameList[i], (fM.userPointer==i)? &Font20 :&Font16, (fM.userPointer==i)?FOREGROUND_SELECTED:FORGROUND, BACKGROUND);
         height+=45;
     }
     SUBMIT(ScreenBuffer);
+    
 }
 
 void drawUiChange(){
-    
+
     if(fM.userPointer>=FILECAP || fM.fileTrackingPointer>=fM.fileCount) {
         int nextIndex=(fM.fileTrackingPointer>=fM.fileCount)?(0, fM.fileTrackingPointer=0):fM.fileTrackingPointer;
         Paint_Clear(BACKGROUND);
@@ -153,5 +155,4 @@ void drawUiChange(){
         drawMenuTray();
     }
     else drawFileNames();
-    SUBMIT(ScreenBuffer);
 }

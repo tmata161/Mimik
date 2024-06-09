@@ -5,17 +5,14 @@
 
 #include "src/LCD_Test.h"
 #include "lib/LCD/LCD_1in3.h"
-//#include"lib/lfs/lfs.h"
-#include "hardware/flash.h"
-#include "hardware/sync.h"
 #include"pico/stdio.h"
 #include<stdio.h>
 #include"pico/stdlib.h"
 #include <string.h>
 
 
-#define SCREEN_HEIGHT 240
-#define SCREEN_WIDTH 240
+#define SCREEN_HEIGHT LCD_1IN3_HEIGHT
+#define SCREEN_WIDTH LCD_1IN3_WIDTH
 #define IMAGE_SIZE SCREEN_HEIGHT*SCREEN_WIDTH
 
 //Button definition
@@ -47,10 +44,9 @@ typedef struct tracker{
 }fileTrack;
 
 
-//----------Function Definition---------
+//----------Function Declaration---------
 void master();
+void initScreen();
 fileTrack* fileTracker(int index);
 //-----------------------------------
-
-
 #endif

@@ -4,8 +4,9 @@
 #include"screen_init.c"
 #include"../masterHeader.h"
 #include"UI/fileManager.h"
+#include"../../lib/lfs/init_filesystem.h"
 
-const char demoFiles[][15] = {"demo1.mik", "demo2.mik", "demo3.mik", "demo4.mik", "demo5.mik", "demo6.mik", "demo7.mik", "demo8.mik", "demo9.mik", "demo10.mik", "demo11.mik", "demo12.mik", "demo13.mik", "demo14.mik", "demo15.mik", "demo16mik", "demo17.mik", "demo18.mik", "demo19.mik", "demo20.mik",};
+const char demoFiles[][15] = {"demo1.mik", "demo2.mik", "demo3.mik", "demo4.mik", "demo5.mik", "demo6.mik", "demo7.mik", "demo8.mik", "demo9.mik", "demo10.mik", "demo11.mik", "demo12.mik", "demo13.mik", "demo14.mik", "demo15.mik", "demo16mik", "demo17.mik", "demo18.mik", "demo19.mik"};//, "demo20.mik",};
 int fileNo=sizeof(demoFiles)/sizeof(demoFiles[0]);
 UWORD* ScreenBuffer;
 fileTrack ft;
@@ -14,6 +15,8 @@ void initScreen();
 void drawBootLogo();
 
 void master(){
+    //init LFS file system
+    lfsMount();
     //setup screen
     initScreen();
     //draw boot logo
@@ -55,7 +58,7 @@ void drawBootLogo(){
     Paint_Clear(BLACK);
     Paint_DrawString_EN(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, "MIMIK", &Font20, WHITE, BLACK);
     SUBMIT(ScreenBuffer);
-    DEV_Delay_ms(200);
+    DEV_Delay_ms(500);
     Paint_Clear(BLACK);
 }
 
