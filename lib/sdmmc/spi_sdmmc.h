@@ -10,10 +10,10 @@ This library is derived from ChaN's FatFs - Generic FAT Filesystem Module.
 
 /* SDMMC SPI pins*/
 #define SDMMC_SPI_PORT spi1
-#define SDMMC_PIN_MISO 22
-#define SDMMC_PIN_CS   26
-#define SDMMC_PIN_SCK  27
-#define SDMMC_PIN_MOSI 28
+#define SDMMC_PIN_MISO 7 //Tx
+#define SDMMC_PIN_CS   5
+#define SDMMC_PIN_SCK  6
+#define SDMMC_PIN_MOSI 4 //Rx
 /* ====================== */
 
 /* MMC/SD command */

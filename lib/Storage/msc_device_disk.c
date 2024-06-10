@@ -24,12 +24,13 @@
  * THE SOFTWARE.
  *
  */
-#include "bsp/board.h"
-#include "tusb.h"
-
+//#include "bsp/board.h"
+//#include "tusb.h"
+#include "storage_driver.h"
 #include "../sdmmc/spi_sdmmc.h"
 #include "hardware/gpio.h"
-#include "storage_driver.h"
+
+#define CFG_TUD_MSC 1
 
 sdmmc_data_t *pSDMMC=NULL;
 
@@ -61,8 +62,8 @@ void tud_msc_inquiry_cb(uint8_t lun, uint8_t vendor_id[8], uint8_t product_id[16
 {
   switch (lun) {
     case SDMMC_LUN:
-      sprintf(vendor_id  , "SDMMC");
-      sprintf(product_id , "Mass Storage");
+      sprintf(vendor_id  , "SDMMC Mimik");
+      sprintf(product_id , "Mimik Mass Storage");
       sprintf(product_rev, "1.0");
     break;
   }
@@ -73,8 +74,6 @@ void tud_msc_inquiry_cb(uint8_t lun, uint8_t vendor_id[8], uint8_t product_id[16
 // return true allowing host to read/write this LUN e.g SD card inserted
 bool tud_msc_test_unit_ready_cb(uint8_t lun)
 {
-  //if ( lun == 1 && board_button_read() ) return false;
-
   return true; // RAM disk is always ready
 }
 
@@ -116,12 +115,8 @@ bool tud_msc_start_stop_cb(uint8_t lun, uint8_t power_condition, bool start, boo
 // Copy disk's data to buffer (up to bufsize) and return number of copied bytes.
 int32_t tud_msc_read10_cb(uint8_t lun, uint32_t lba, uint32_t offset, void* buffer, uint32_t bufsize)
 {
-  switch(lun) {
-    case SDMMC_LUN:
-      if (!sdmmc_read_sector(lba, buffer, bufsize, pSDMMC)) return -1;
-    break;
-  }
-  return (int32_t) bufsize;
+  if(disk_read(&lun,buffer, lba, 1)!=RES_OK)return -1;
+  else return (int32_t) bufsize;
 }
 
 bool tud_msc_is_writable_cb (uint8_t lun)
@@ -140,12 +135,8 @@ bool tud_msc_is_writable_cb (uint8_t lun)
 int32_t tud_msc_write10_cb(uint8_t lun, uint32_t lba, uint32_t offset, uint8_t* buffer, uint32_t bufsize)
 {
 
-  switch (lun) {
-    case SDMMC_LUN:
-        if (!sdmmc_write_sector(lba, buffer, bufsize, pSDMMC)) return -1;
-    break;
-  }
-  return (int32_t) bufsize;
+ if(disk_write(&lun, buffer, lba, 1) != RES_OK) return -1;
+ else return (int32_t) bufsize;
 }
 
 // Callback invoked when received an SCSI command not in built-in list below
@@ -206,4 +197,52 @@ void led_blinking_task(void)
 
 void led_blinking_task_off(void) {
   gpio_put(LED_BLINKING_PIN,false);
+}
+
+
+DRESULT disk_read (void *drv, BYTE* buff, DWORD sector, UINT count)
+{
+  if (!sdmmc_read_sector(sector, buff, SDMMC_SECT_SIZE, pSDMMC)) return RES_ERROR;
+  else return RES_OK;
+}
+
+DRESULT disk_write (void *drv, const BYTE* buff, DWORD sector, UINT count)
+{
+if (!sdmmc_write_sector(sector, (uint8_t *) buff, SDMMC_SECT_SIZE, pSDMMC)) return RES_ERROR;
+else return RES_OK;
+}
+
+DRESULT disk_ioctl (void *drv, BYTE cmd, void* buff)
+{
+switch(cmd){
+  
+  case CTRL_SYNC:
+    return RES_OK;
+    break;
+  case GET_SECTOR_COUNT:
+    *(DWORD*) buff = pSDMMC->sectCount;
+    return RES_OK;
+    break;
+
+  case GET_SECTOR_SIZE:
+    *(DWORD*) buff = pSDMMC->sectSize;
+    return RES_OK;
+    break;
+
+  case GET_BLOCK_SIZE:
+    *(DWORD*) buff = 1;
+    return RES_OK;
+    break;
+
+  case IOCTL_INIT:
+  *(DSTATUS*) buff = RES_OK;
+  return RES_OK;
+  break;
+
+  case IOCTL_STATUS:
+  *(DSTATUS*)buff=RES_OK;
+  return RES_OK;
+  break;
+}
+return RES_ERROR;
 }

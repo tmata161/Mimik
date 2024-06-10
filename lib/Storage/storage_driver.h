@@ -1,7 +1,7 @@
 #ifndef _STORAGE_DRIVER_H_
 #define _STORAGE_DRIVER_H_
 /* used by my project */
-
+#include"storage.h"
 #define SPI_BAUDRATE_LOW (1000*1000)
 #define SPI_BAUDRATE_HIGH (40*1000*1000)
 
