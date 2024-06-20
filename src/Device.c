@@ -5,7 +5,7 @@
 #include"UI/fileManager.h"
 #include"../../lib/lfs/init_filesystem.h"
 
-
+#include"bootlogo.h"
 UWORD* ScreenBuffer;
 FATFS fat;
 
@@ -55,19 +55,23 @@ void initScreen(){
    // LCD_2IN_Display((UBYTE*)ScreenBuffer);
 }
 
-
 void drawBootLogo(){
+    const unsigned char *logoArray[]={frame_0_delay_0_1s, frame_1_delay_0_1s, frame_2_delay_0_1s, frame_3_delay_0_1s, frame_4_delay_0_1s, frame_5_delay_0_1s};
     Paint_Clear(BLACK);
     char cDown[10];
-    Paint_DrawString_EN((SCREEN_WIDTH/2)-40, (SCREEN_HEIGHT/2)-24, "Mimik", &Font24, WHITE, BACKGROUND);
+    //Paint_DrawString_EN((SCREEN_WIDTH/2)-40, (SCREEN_HEIGHT/2)-24, "Mimik", &Font24, WHITE, BACKGROUND);
    
 //loading screen
-    for(int i=5; i>=1; i--){
-        sprintf(cDown, "%d" ,i);
-        Paint_DrawString_EN(SCREEN_WIDTH/2, (SCREEN_HEIGHT/2)+25, cDown, &Font20, CYAN, BACKGROUND);
+for(int time=1; time<=5; time++){
+        for(int i=0; i<6; i++){
+        //sprintf(cDown, "%d" ,i);
+        //Paint_DrawString_EN(SCREEN_WIDTH/2, (SCREEN_HEIGHT/2)+25, cDown, &Font20, CYAN, BACKGROUND);
+        Paint_DrawImage(logoArray[i], 20, 20, 60, 60);
+        Paint_DrawImage(logoArray[i], 100, 100, 60, 60);
+        Paint_DrawImage(logoArray[i], 150, 150, 60, 60);
         SUBMIT(ScreenBuffer);
-        DEV_Delay_ms(1000);
     }
+}
 
     Paint_Clear(BLACK);
 }
