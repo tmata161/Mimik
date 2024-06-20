@@ -10,6 +10,8 @@
 #include"pico/stdlib.h"
 #include <string.h>
 
+#include"lib/USB/MSC/mimikMSC.h"
+
 
 #define SCREEN_HEIGHT LCD_1IN3_HEIGHT
 #define SCREEN_WIDTH LCD_1IN3_WIDTH
@@ -33,20 +35,15 @@
 //..............................
 
 //----------Variable Declaration-----------
-extern UWORD* ScreenBuffer;
+extern UWORD* ScreenBuffer ;
+extern FATFS fat;
 //---------------------------------------
 
 //-----------Structure Declaration--------
-typedef struct tracker{
-    char files[10][255];
-    int fileNo;
-    int totalFileCount;
-}fileTrack;
 
 
 //----------Function Declaration---------
 void master();
 void initScreen();
-fileTrack* fileTracker(int index);
 //-----------------------------------
 #endif

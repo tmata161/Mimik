@@ -77,7 +77,7 @@ void tud_hid_set_report_cb(uint8_t instance, uint8_t report_id, hid_report_type_
 }
 //lets check callback function
 void tud_mount_cb(void)
-{}
+{printf("hid callback\n");}
 // Invoked when device is unmounted
 void tud_umount_cb(void)
 {}

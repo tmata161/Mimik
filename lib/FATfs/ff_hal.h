@@ -1,6 +1,5 @@
-#indef FF_HAL
+#ifndef FF_HAL
 #define FF_HAL
-
 
 #include<stdio.h>
 #include<stdlib.h>

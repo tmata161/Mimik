@@ -172,8 +172,8 @@ uint8_t const *tud_descriptor_configuration_cb(uint8_t index)
 char const *string_desc_arr[] =
     {
         (const char[]){0x09, 0x04}, // 0: is supported language is English (0x0409)
-        "|Ducky Pie|",                  // 1: Manufacturer
-        " |Ducky keyboard| ",         // 2: Product
+        "Mimik",                  // 1: Manufacturer
+        "Mimik HID",         // 2: Product
         "2281700052004",                   // 3: Serials, should use chip ID
 };
 

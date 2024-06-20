@@ -2,7 +2,6 @@
 
 //------------Include Section----------
 #include"fileManager.h"
-
 //only for development purpose
 #include"pico/bootrom.h"
 //------------------------------------
@@ -11,17 +10,30 @@
 //-----------Function Declaration--------------
 void buttonInterruptFileManager();  //handles all button interrupts
 void parseFiles(int index); //parse files from file tracker function
-void drawUiChange(); //update ui with respect to button input
+void handleScrollUI(); //update ui with respect to button input
+void handleOK();
+void handleESC();
 void drawFileNames(); //draws file names
+int fileTracker(int index);
+void fillFileArray();
+void openDirectory();
+void closeDirectory();
+void go();
 //----------------------------------------------
 
 //-----------Global variables----------------
-
 fileManagerStruct fM;
+char demoFiles[25][100]={};
+//fileTrack ft;
+FF_DIR gDIR; //a global directory structure variable
+SDFile sdf; //holds data of 50 entries of a folder in ram
+char cDir[100]="/"; //holds location of current directory
 //------------------------------------------
 
 //entry section of code for every page
 void entryfileManager(){
+    openDirectory();
+    fillFileArray();
     fM.userPointer=0;
     fM.fileTrackingPointer=0;
     memset(ScreenBuffer, '0', IMAGE_SIZE);
@@ -47,7 +59,7 @@ void buttonInterruptFileManager(){
         if((!DEV_Digital_Read(JOYSTICK_UP))){
             fM.userPointer-=1;
             fM.fileTrackingPointer-=1;
-            drawUiChange(fM.userPointer);
+            handleScrollUI(fM.userPointer);
             HALT(JOYSTICK_UP);
         }
 
@@ -55,13 +67,14 @@ void buttonInterruptFileManager(){
         else if((!DEV_Digital_Read(JOYSTICK_DOWN))){
             fM.userPointer+=1;
             fM.fileTrackingPointer+=1;
-            drawUiChange(fM.userPointer);
+            handleScrollUI(fM.userPointer);
             HALT(JOYSTICK_DOWN);
         }
 
         //OK
         else if((!DEV_Digital_Read(OK))){
-            pageSwitch=1;
+            handleOK();
+            //pageSwitch=1;
             break;
             HALT(OK);
         }
@@ -75,7 +88,7 @@ void buttonInterruptFileManager(){
 
         //ESC
         else if((!DEV_Digital_Read(ESC))){
-            printf("Joystick ESC pressed\n");
+            handleESC();
             HALT(ESC);
         }
 
@@ -89,7 +102,7 @@ void buttonInterruptFileManager(){
     //page switch
     switch(pageSwitch){
         case 0: entrySetting(); break;
-        case 1: entryInjection(fM.fileNameList[fM.userPointer]); break;
+        case 1: entryInjection(fM.Info[fM.userPointer].fname); break;
     }
     
 }
@@ -97,14 +110,8 @@ void buttonInterruptFileManager(){
 
 // function will ask the file tracker function to give it the files
 void parseFiles(int index){
-    fileTrack* ft = fileTracker(index);
-    fM.fileCount=ft->totalFileCount;
-    // resetting memory of array
-    for(int i=0; i<FILECAP; memset(fM.fileNameList[i++], ' ', 255));
-        
-    for(int i=0; i<ft->fileNo; i++){
-        memcpy(fM.fileNameList[i], ft->files[i], 255);
-    }
+    int fileNo = fileTracker(index);
+    fM.fileCount=sdf.fCount;
     drawFileNames();
 }
 
@@ -113,15 +120,14 @@ void drawFileNames(){
     int height=20;
     Paint_DrawRectangle(45+5, 10+5, SCREEN_HEIGHT-5, SCREEN_WIDTH-5, BACKGROUND , DOT_PIXEL_1X1, DRAW_FILL_FULL);
     for(int i=0; i<FILECAP; i++){
-        //Paint_DrawRectangle(50, height, SCREEN_WIDTH, height+30, (fM.userPointer==i)?THEME_SELECTEDBOX:BACKGROUND, DOT_PIXEL_1X1, (fM.userPointer==i)?DRAW_FILL_FULL:DRAW_FILL_EMPTY);
-        Paint_DrawString_EN(55, height, fM.fileNameList[i], (fM.userPointer==i)? &Font20 :&Font16, (fM.userPointer==i)?FOREGROUND_SELECTED:FORGROUND, BACKGROUND);
+        Paint_DrawString_EN(60, height, fM.Info[i].fname , (fM.userPointer==i)? &Font20 :&Font16, (fM.userPointer==i)?FOREGROUND_SELECTED:FORGROUND, BACKGROUND);
         height+=45;
     }
     SUBMIT(ScreenBuffer);
     
 }
 
-void drawUiChange(){
+void handleScrollUI(){
 
     if(fM.userPointer>=FILECAP || fM.fileTrackingPointer>=fM.fileCount) {
         int nextIndex=(fM.fileTrackingPointer>=fM.fileCount)?(0, fM.fileTrackingPointer=0):fM.fileTrackingPointer;
@@ -155,4 +161,109 @@ void drawUiChange(){
         drawMenuTray();
     }
     else drawFileNames();
+}
+
+//this function handles ok button event
+void handleOK(){
+    //chk if current entity is file or folder
+    if((fM.Info[fM.userPointer].fattrib) == AM_DIR && fM.Info[fM.userPointer].fname!=0){
+        //close current directory object
+        closeDirectory();
+        go();
+        printf("target directory %s\n", cDir);
+        //delete old file info object
+        memset(&sdf, '\0', sizeof(FILINFO));
+        //delete old file manager object
+        memset(&fM, ' ', sizeof(fileManagerStruct));
+        //clear screen blank
+        Paint_Clear(BACKGROUND);
+        //call entry file manager function again to draw everything back
+        entryfileManager();
+    }
+    else {
+        go();
+        printf("target file %s\n", cDir);
+        entryInjection(cDir);
+    }
+}
+
+//this function handles esc button event
+void handleESC(){
+    //chk if folder is not root
+    if(strcmp(cDir, "/")!=0){
+        //close current directory object
+        closeDirectory();
+        back();      
+        printf("target directory %s\n", cDir);
+        //delete old file info object
+        memset(&sdf, '\0', sizeof(FILINFO));
+        //delete old file manager object
+        memset(&fM, '\0', sizeof(fileManagerStruct));
+        //clear screen blank
+        Paint_Clear(BACKGROUND);
+        //call entry file manager function again to draw everything back
+        entryfileManager();
+    }
+    else {
+        printf("target directory %s\n", cDir);
+        }
+}
+// read files from demo list and show on screen
+// argument-> index of file
+// return -> object of file list and number of files present in list
+int fileTracker(int index){
+    int fileNo=0;
+    //if total files in the directory is more than 5 : do maths else : just copy
+    if(sdf.fCount>FILECAP){ //is more than 10
+            for(int i=index ; i < ((index!=0) ? ((sdf.fCount-index>FILECAP)?FILECAP+index:sdf.fCount) : FILECAP); i++){
+                memcpy(&fM.Info[fileNo], &sdf.Info[i], sizeof(FILINFO));
+                fileNo+=1;
+                
+            }
+           return fileNo; 
+    }
+    else{ //is less or equal 5
+        for(int i=0; i<sdf.fCount; i++){
+            memcpy(&fM.Info[fileNo], &sdf.Info[i], sizeof(FILINFO));
+            fileNo+=1;
+        }
+        return fileNo;
+    }
+}
+
+void fillFileArray(){
+    //count total number of files files
+    sdf.fCount=countFiles(&fat, cDir);
+    if(sdf.fCount>0){ //if there something present inside the directory
+        listFile(&fat, cDir, &gDIR, sdf.Info);
+    }
+}
+
+void openDirectory(){
+    f_opendir(&fat, &gDIR, cDir);
+}
+
+void closeDirectory(){
+    f_closedir(&gDIR);
+}
+
+void go(){
+//add a slash to the target directory
+        if(strlen(cDir)>1)strcat(cDir, "/");
+        //add new location to the directory array
+        strcat(cDir, fM.Info[fM.userPointer].fname);
+}
+
+void back(){
+//goto directory residing above it
+        for(int i=sizeof(cDir)-1; i>=0; i--){ 
+            //trigger if got a [/]
+            if(cDir[i]=='/'){
+                //add all null character after
+                for(int k=(i==0)?i+1:i; k<sizeof(cDir); k++){
+                    cDir[k]='\0';
+                }
+                break;
+            }
+        }
 }

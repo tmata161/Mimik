@@ -1,25 +1,28 @@
+
+
 #ifndef EXT_STORAGE
 #define EXT_STORAGE
 
-#include"tusb.h"
-#include"bsp/board.h"
 
 #include"../FATfs/ff.h"
 #include"../FATfs/diskio.h"
 
+#include "../sdmmc/spi_sdmmc.h"
+#include "hardware/gpio.h"
+
 #include<stdio.h>
-#include<string.h>
 #include<stdlib.h>
+#include<string.h>
+#include"pico/stdio.h"
+#include"pico/stdlib.h"
 
-
-void storage_init();
-void storage_loop();
-void tud_unmount_cb(void);
-
+#include"tusb.h"
+#include"bsp/board.h"
+#include<stdio.h>
+#include"pico/stdio.h"
 
 //------------Function Declaration-------
 void storage_driver_init();
-
 
 uint8_t tud_msc_get_maxlun_cb(void);
 void tud_msc_inquiry_cb(uint8_t lun, uint8_t vendor_id[8], uint8_t product_id[16], uint8_t product_rev[4]);
@@ -36,10 +39,23 @@ void led_blinking_task_off(void);
 DRESULT disk_read (void *drv, BYTE* buff, DWORD sector, UINT count);
 DRESULT disk_write (void *drv, const BYTE* buff, DWORD sector, UINT count);
 DRESULT disk_ioctl (void *drv, BYTE cmd, void* buff);
+
+
+FRESULT initFilesystem(FATFS* fatsys);
+char* readFile(FATFS* fatsys, char* fileName, int fileSize);
+int file_size(FATFS *fs, char *filename);
+FRESULT writeFile(FATFS *fs, char *filename, char *buffer, UINT bufsize);
+void initTUDmsc();
+void listFile(FATFS *fs, char *folder,FF_DIR* directoryPointer, FILINFO* fileInfo);
+int countFiles(FATFS *fs, char *cdir); //returns no. of entries present inside a folder
+
+
+void checkSDCard();
 //------------Function Declaration End-------
 
 //-------------Global variable declaration-------
-extern FATFS fatsys;
+//extern FATFS fatsys;
 //-------------Global variable declaration End-------
 
 #endif
+
