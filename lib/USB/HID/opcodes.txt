@@ -1,0 +1,20 @@
+
+//////////////////////////////////////////////////////////
+            Device Modes
+
+    > HID [keyboard, mouse, gamepad]
+    > MSC [copy data to/from sdcard to targe]
+    > MIDI
+
+
+////////////////////////////////////////////////////////
+                HID Mode
+
+
+Statement Categorization 
+
+1>  Expression Statement
+    WRITE -> send a stream of string
+    WAIT -> wait for some seconds {S:seconds / M:minutes / H:hour // default second}
+    
+
