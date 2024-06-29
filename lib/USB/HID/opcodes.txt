@@ -14,7 +14,35 @@
 Statement Categorization 
 
 1>  Expression Statement
+    PRESS -> press a particular key
     WRITE -> send a stream of string
     WAIT -> wait for some seconds {S:seconds / M:minutes / H:hour // default second}
-    
+    REPEAT n-> repeat just next line for n times
 
+2> Control Statement
+    If/ELSE
+
+3> Jump Statement
+    LABELS :
+    JUMP -> jump to a particular label 
+    STOP : get out of jump
+
+4> Iteration Statement
+    LOOP [condition]
+
+5> Variables
+    STORE -> can store integers and strings
+
+6> Script blocks => curly braces{}
+                    new line - none
+
+7> Operators 
+    +
+    -
+    *
+    /
+    <
+    =
+    >
+    !
+    && ||

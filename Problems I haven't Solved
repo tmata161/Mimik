@@ -4,10 +4,7 @@
 ---------------------------------------------------
                     MAIN WORK
 ----------------------------------------------------
-Code Logic Pipeline is not clear
-Mouse function missing
-HID keywords missing
-USB Flash media storage system not implemented
+Interpreter
 
 
 
@@ -17,6 +14,4 @@ USB Flash media storage system not implemented
 ---------------------------------------------------
                     SIDE WORK
 ----------------------------------------------------
-Some UI work is unfinished
-Options are not saving
-Show only payload files
+
