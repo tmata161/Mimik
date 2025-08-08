@@ -17,6 +17,5 @@ void led_blinking_task(void);
 void led_blinking_task_off(void);
 /* =================================  */
 
-void storage_driver_init(void);
 
 #endif

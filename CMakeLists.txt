@@ -1,6 +1,7 @@
+set(PROJECT mimik)
 cmake_minimum_required(VERSION 3.13)
 include(pico_sdk_import.cmake)
-project(mimik)
+project(mimik C CXX ASM)
 pico_sdk_init()
 
 add_subdirectory(lib/FATfs)
@@ -31,9 +32,7 @@ include_directories(./src/UI)
 
 
 
-add_executable(mimik
-mimik.c
-)
+add_executable(mimik mimik.c)
 
 # enable usb output, disable uart output
 pico_enable_stdio_uart(mimik 1)

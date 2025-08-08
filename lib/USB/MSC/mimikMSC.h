@@ -21,9 +21,9 @@
 #include<stdio.h>
 #include"pico/stdio.h"
 
-//------------Function Declaration-------
-void storage_driver_init();
+#include"storage_driver.h"
 
+//------------Function Declaration-------
 uint8_t tud_msc_get_maxlun_cb(void);
 void tud_msc_inquiry_cb(uint8_t lun, uint8_t vendor_id[8], uint8_t product_id[16], uint8_t product_rev[4]);
 bool tud_msc_test_unit_ready_cb(uint8_t lun);
@@ -46,16 +46,12 @@ char* readFile(FATFS* fatsys, char* fileName, int fileSize);
 int file_size(FATFS *fs, char *filename);
 FRESULT writeFile(FATFS *fs, char *filename, char *buffer, UINT bufsize);
 void initTUDmsc();
-void listFile(FATFS *fs, char *folder,FF_DIR* directoryPointer, FILINFO* fileInfo);
+void copyFiles(FATFS *fs, char *folder,FF_DIR* directoryPointer, FILINFO* fileInfo);
 int countFiles(FATFS *fs, char *cdir); //returns no. of entries present inside a folder
 
-
-void checkSDCard();
+uint8_t sdmmc_disk_initialize(spi_inst_t *spi, uint cs_pin, sdmmc_data_t *sdmmc);
+unsigned int storage_driver_init(void);
+unsigned int detectCard();
 //------------Function Declaration End-------
-
-//-------------Global variable declaration-------
-//extern FATFS fatsys;
-//-------------Global variable declaration End-------
-
 #endif
 

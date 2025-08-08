@@ -26,34 +26,35 @@
  */
 #include "bsp/board.h"
 #include "tusb.h"
-#include "storage_driver.h"
 #include "mimikMSC.h"
 
 #include "hardware/flash.h"
+
+
 #define PICO_SIZE 2*1024*1024
 #define FAT 128*1024
 const char* baseSize = (char*) (PICO_SIZE - FAT);
 const int sectorSize=512;
 const int sectorCount=FAT/sectorSize;
 char* fatdata=(char*)(XIP_NOCACHE_NOALLOC_BASE+(PICO_FLASH_SIZE_BYTES-FAT));
-sdmmc_data_t *pSDMMC=NULL;
 
-void storage_driver_init() {
-  // SDMMC driver initialize
-  pSDMMC = (sdmmc_data_t*)malloc(sizeof(sdmmc_data_t)); 
-  if(pSDMMC==NULL){printf("unable to allocate memory\n");return;}
-  pSDMMC->spiInit=false;
+sdmmc_data_t pSDMMC;
+
+unsigned int storage_driver_init() {
+  pSDMMC.spiInit=false;
 #ifdef __SPI_SDMMC_DMA
-  pSDMMC->dmaInit=false;
+  pSDMMC.dmaInit=false;
 #endif
-  sdmmc_disk_initialize(SDMMC_SPI_PORT, SDMMC_PIN_CS, pSDMMC);
-
-  // LED blinking when reading/writing
-  gpio_init(LED_BLINKING_PIN);
-  gpio_set_dir(LED_BLINKING_PIN, true);
+int ret = sdmmc_disk_initialize(SDMMC_SPI_PORT, SDMMC_PIN_CS, &pSDMMC);
+printf("sdmmc initialization code: %d\n", ret);
+return (ret==1)?1:0;
 }
 
-
+//detects for sd card
+//return: 1 for detected; 0: for not detected
+unsigned int detectCard(){
+  return ((sdmmc_send_cmd(CMD0, 0, &pSDMMC)==1)? 1:0);
+}
 
 // Invoked to determine max LUN
 uint8_t tud_msc_get_maxlun_cb(void)
@@ -81,8 +82,8 @@ bool tud_msc_test_unit_ready_cb(uint8_t lun)
 // Application update block count and block size
 void tud_msc_capacity_cb(uint8_t lun, uint32_t* block_count, uint16_t* block_size)
 {
-        *block_count = pSDMMC->sectCount;//sectorCount;
-        *block_size  = pSDMMC->sectSize;//sectorSize;
+        *block_count = pSDMMC.sectCount;//sectorCount;
+        *block_size  = pSDMMC.sectSize;//sectorSize;
 }
 
 // Invoked when received Start Stop Unit command
@@ -193,7 +194,7 @@ void led_blinking_task_off(void) {
 DRESULT disk_read (void *drv, BYTE* buff, DWORD sector, UINT count)
 {
   //printf("disk read callback\n");
-  if (!sdmmc_read_sector(sector, buff, SDMMC_SECT_SIZE, pSDMMC)) return RES_ERROR;
+  if (!sdmmc_read_sector(sector, buff, SDMMC_SECT_SIZE, &pSDMMC)) return RES_ERROR;
   //memcpy(buff, fatdata+(sector*sectorSize), sectorSize);
   return RES_OK;
 }
@@ -202,7 +203,7 @@ DRESULT disk_write (void *drv, const BYTE* buff, DWORD sector, UINT count)
 {
   //printf("disk write callback: sector-> %d\n", sector);
   uint32_t ints = save_and_disable_interrupts();
-if (!sdmmc_write_sector(sector, (uint8_t *) buff, SDMMC_SECT_SIZE, pSDMMC)) return RES_ERROR;
+if (!sdmmc_write_sector(sector, (uint8_t *) buff, SDMMC_SECT_SIZE, &pSDMMC)) return RES_ERROR;
 //flash_range_erase((*fatdata+(sector*sectorSize)), sectorSize);
 //flash_range_program((*fatdata+(sector*sectorSize)), buff, sectorSize);
 //memcpy(fatdata+(sector*sectorSize), buff, sectorSize);
@@ -219,12 +220,12 @@ switch(cmd){
     return RES_OK;
     break;
   case GET_SECTOR_COUNT:
-    *(DWORD*) buff = pSDMMC->sectCount;//sectorCount;
+    *(DWORD*) buff = pSDMMC.sectCount;//sectorCount;
     return RES_OK;
     break;
 
   case GET_SECTOR_SIZE:
-    *(DWORD*) buff = pSDMMC->sectSize;//sectorSize;
+    *(DWORD*) buff = pSDMMC.sectSize;//sectorSize;
     return RES_OK;
     break;
 

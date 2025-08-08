@@ -1,6 +1,6 @@
 // contains code for all implemented in more than one page 
 #include"UI.h"
-#include"uiImage.h"
+#include"images/uiImage.h"
 
 const char menuItems[][5]={"OK", "---", "SET", "ESC"};
 // draw menu tray at side

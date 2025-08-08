@@ -5,24 +5,13 @@
 //---------only for testing purpose
 #include"pico/bootrom.h"
 #define Y 21
+
 const int gpios[] = {4,5,6,7};
-//----------------------------APT code resides here-------------------
+//----------------------------filesystem helper functions resides here-------------------
 FRESULT initFilesystem(FATFS* fatsys){
     uint8_t work[FF_MAX_SS];
     FRESULT res;
-// //noise ..
-for(int k=1; k<=3; k++){
-    for(int i=0;i<4;i++){
-    gpio_init(gpios[i]);
-    gpio_set_dir(gpios[i], GPIO_OUT);
-    gpio_put(gpios[i], 0);
-}for(int i=0;i<4;i++){
-    gpio_put(gpios[i], 1);
-}
-}
-    storage_driver_init();
-
-    //res=f_mkfs(fs, FM_FAT, 0 , work, sizeof(work));
+    
       if (f_mount(fatsys)!=FR_OK){
         printf("FAT:Unable to mount , attempting to format\n");
 
@@ -41,7 +30,7 @@ for(int k=1; k<=3; k++){
             }
       }
       else {
-        printf("FAT:Mount Successful\n");
+        printf("FAT mount Successful\n");
         }
 
      return FR_OK;
@@ -88,54 +77,44 @@ int lenEx=strlen(ex)-1;
 if(lenEx>3){ //name of file should be greater than 3
     if(ex[lenEx--]=='k' && ex[lenEx--]=='i' && ex[lenEx--]=='m' && ex[lenEx]=='.') //chk last 3 characters match extension 
         return 1;
-
-    else return 0;
 } return 0;
 }
 
-//returns number of files with extension .mik and other directories in a directory
+//returns number of files present in a directory (ending with extension .mik)
 int countFiles(FATFS *fs, char *cdir){
     FF_DIR dir;
     FILINFO finfo;
     int retCount=0; //returns no. of obj
-
     if(f_opendir(fs, &dir, cdir) != FR_OK){
-        printf("Could not open directory while counting\n");
+        printf("Could not open directory for counting\n");
+        //notification("an error occured, pleases restart the system :(");
         exit(1);
     }
-
+    f_rewinddir(&dir);
     while(f_readdir(&dir, &finfo) == FR_OK && finfo.fname[0]!=0){
         //do not count . and ..
-        if(strcmp(finfo.fname, ".")!=0 || strcmp(finfo.fname, "..")!=0){
-            if(doesExtensionMatch(finfo.fname) || finfo.fattrib == AM_DIR) //only if extension matches
+        if((strcmp(finfo.fname, ".")!=0 || strcmp(finfo.fname, "..")!=0) && (finfo.fname[0]!='.')){
+            if(finfo.fattrib==AM_ARC || finfo.fattrib==AM_DIR) //only if is a file and extension matches OR is a directory
                 retCount++;
         }
+       
     }
     return retCount;
 }
 
-// return 50 entries from a directory with .mik extension
-//this function is designed in such a way that it can read files anywhere from between
-void listFile(FATFS *fs, char *folder,FF_DIR* directoryPointer, FILINFO* fileInfo){
+// copies 50 file entries from external storage into memory
+void copyFiles(FATFS *fs, char *folder,FF_DIR* directoryPointer, FILINFO* fileInfo){
     // directory is already opened  
-    int c=0; //for only 50 files are copied
-    FILINFO tempInfo;
-    while(f_readdir(directoryPointer, &tempInfo) == FR_OK && tempInfo.fname[0]!=0 && c<50){
-        if((tempInfo.fattrib) != AM_DIR){ //current entity is a directory
-            if(doesExtensionMatch(tempInfo.fname)) {
-                //memcpy(fileInfo[c].fname, tempInfo.fname, strlen(tempInfo.fname));
-                fileInfo[c]=tempInfo;
-                c++;
+    int fileCounter=0; //copy only 50 file names into memory
+    FILINFO temp;
+    while(f_readdir(directoryPointer, &temp) == FR_OK && temp.fname[0]!=0 && fileCounter<50){
+        if(temp.fattrib == AM_ARC || (temp.fattrib==AM_DIR && (temp.fname[0]!='.'))){
+                fileInfo[fileCounter]=temp;
+                fileCounter++;
             }
         }
-        else{ //current entity is a file
-            //memcpy(fileInfo[c].fname, tempInfo.fname, strlen(tempInfo.fname));
-            fileInfo[c]=tempInfo;
-            c++;
-        }
-    }
 }
-//-----------------------API code end---------------------------------
+//-----------------------filesystem helper functions end---------------------------------
 
 
 
@@ -180,26 +159,3 @@ gpio_set_dir(Y, GPIO_IN);
     
 }
 //----------------------TUD code end------------------------
-
-
-
-
-
-void checkSDCard(){
-    sdmmc_data_t pSDMMC;
-    pSDMMC.spiInit=false;
-    sdmmc_disk_initialize(SDMMC_SPI_PORT, SDMMC_PIN_CS, &pSDMMC);
-
-    //only for testing
-gpio_init(Y);
-gpio_pull_up(Y);
-gpio_set_dir(Y, GPIO_IN);
-gpio_init(25);
-gpio_set_dir(25, true);
-    while(1){
-        interrupt_reset_request();
-        led_blinking_task();
-        printf("card presence %d\n", sdmmc_send_cmd(CMD8, 0, &pSDMMC));
-        //if(pSDMMC.Stat==0){pSDMMC.spiInit=false;sdmmc_disk_initialize(SDMMC_SPI_PORT, SDMMC_PIN_CS, &pSDMMC);}
-    }
-}

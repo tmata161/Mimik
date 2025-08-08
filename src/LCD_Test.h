@@ -32,10 +32,8 @@
 
 #include "../lib/Config/DEV_Config.h"
 #include "../lib/GUI/GUI_Paint.h"
-#include "ImageData.h"
 #include "Debug.h"
-#include <stdlib.h> // malloc() free()
-
+#include <stdlib.h>
 #include "../lib/Infrared/Infrared.h"
 
 int OLED_1in3_C_test(void);
@@ -49,4 +47,18 @@ void LCD_1IN54_test(void);
 int LCD_1in8_test(void);
 int LCD_1in3_test(void);
 int LCD_2in_test(void);
+
+extern const unsigned char Signal816[];
+extern const unsigned char Msg816[];
+extern const unsigned char Bat816[];
+extern const unsigned char Bluetooth88[];
+extern const unsigned char GPRS88[];
+extern const unsigned char Alarm88[]; 
+extern const unsigned char gImage_0inch96_1[];
+extern const unsigned char gImage_1inch14_1[];
+extern const unsigned char gImage_1inch3_C_1[];
+extern const unsigned char gImage_1inch44_1[];
+extern const unsigned char gImage_1inch8_1[];
+extern const unsigned char gImage_1inch3_1[];
+extern const unsigned char gImage_2inch_1[];
 #endif

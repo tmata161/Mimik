@@ -26,4 +26,4 @@ int fat_file_size(FATFS *fs, char *filename, char *buffer, UINT bufsize);
 /* list and stores info about files (only for rootdir)*/
 FRESULT fat_list_files(FATFS *fs, FAT_LFI *l);
 
-#endif FF_HAL
+#endif

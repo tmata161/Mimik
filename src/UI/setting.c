@@ -1,5 +1,5 @@
 // for setting page
-#include"setting.h"
+#include"UI.h"
 #include"../../lib/lfs/init_filesystem.h"
 
 void buttonInterruptSetting();
@@ -16,12 +16,15 @@ void entrySetting(){
     st.userPointer=0;
     redrawSetting();
     buttonInterruptSetting();
+    return;
 }
 
 void redrawSetting(){
-    Paint_Clear(BACKGROUND);
-    drawMenuTray();
-    drawItemSetting();
+    // Paint_Clear(BACKGROUND);
+    // drawMenuTray();
+    // drawItemSetting();
+
+    notification("This functionality has not been implemented yet :(");
 }
 
 void buttonInterruptSetting(){
@@ -54,7 +57,7 @@ void buttonInterruptSetting(){
     // ScreenBuffer=(UWORD*)malloc(IMAGE_SIZE);
     // if(ScreenBuffer==NULL){ERROR("Unable to setup memory for screen buffer\n");exit(1);}
     // initScreen();
-    entryfileManager();
+    return;
 }
 
 void drawItemSetting(){ 
