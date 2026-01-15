@@ -10,7 +10,7 @@
 #include"pico/stdlib.h"
 #include <string.h>
 
-#include"lib/USB/MSC/mimikMSC.h"
+#include"lib/USB/Media_Storage/media_storage.h"
 
 
 #define SCREEN_HEIGHT LCD_1IN3_HEIGHT
@@ -42,7 +42,10 @@ extern FATFS fat;
 //-----------Structure Declaration--------
 
 
-//----------Function Declaration---------
-void start();
+//----------Screen function Declaration---------
+void initScreen();
+UWORD* allocateScreenBuffer();
+void de_allocateScreenBuffer();
+void drawBootLogo();
 //-----------------------------------
 #endif

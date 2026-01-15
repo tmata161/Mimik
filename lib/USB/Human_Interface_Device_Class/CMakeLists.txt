@@ -1,0 +1,6 @@
+aux_source_directory(. DIR_Human_Interface_Device_Class_SRCS)
+
+include_directories(../Human_Interface_Device_Class)
+
+add_library(Human_Interface_Device_Class ${DIR_Human_Interface_Device_Class_SRCS})
+target_link_libraries(Human_Interface_Device_Class PUBLIC pico_stdlib hardware_sync hardware_flash tinyusb_device tinyusb_board)

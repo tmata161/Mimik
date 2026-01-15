@@ -13,8 +13,8 @@ add_subdirectory(lib/Fonts)
 add_subdirectory(lib/GUI)
 add_subdirectory(lib/lfs)
 add_subdirectory(lib/sdmmc)
-add_subdirectory(lib/USB/MSC)
-add_subdirectory(lib/USB/HID)
+add_subdirectory(lib/USB/Media_Storage)
+add_subdirectory(lib/USB/Human_Interface_Device_Class)
 add_subdirectory(src)
 
 
@@ -24,8 +24,8 @@ include_directories(./lib/GUI)
 include_directories(./lib/LCD)
 include_directories(./lib/Infrared)
 include_directories(./lib/lfs)
-include_directories(./lib/USB/MSC)
-include_directories(./lib/USB/HID)
+include_directories(./lib/USB/Media_Storage)
+include_directories(./lib/USB/Human_Interface_Device_Class)
 include_directories(./lib/sdmmc)
 include_directories(./src)
 include_directories(./src/UI)
@@ -37,7 +37,7 @@ add_executable(mimik mimik.c)
 # enable usb output, disable uart output
 pico_enable_stdio_uart(mimik 1)
 
-target_link_libraries(mimik src FATfs LCD UI MSC HID Infrared GUI Fonts Config sdmmc pico_stdlib hardware_spi hardware_flash pico_multicore lfs HID MSC tinyusb_device tinyusb_board)
+target_link_libraries(mimik src FATfs LCD UI Media_Storage Human_Interface_Device_Class Infrared GUI Fonts Config sdmmc pico_stdlib hardware_spi hardware_flash pico_multicore lfs  tinyusb_device tinyusb_board)
 #( LCD OLED Infrared Icm20948 GUI Fonts Config hardware_spi)
 
 # create map/bin/hex/uf2 file etc.
