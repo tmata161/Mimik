@@ -1,3 +1,5 @@
-.vscode
-build
-Functions_to_implement[Theek karna hai].txt
+.vscode/
+
+build/
+
+/Functions_to_implement[Theek karna hai].txt
