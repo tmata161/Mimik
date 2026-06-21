@@ -77,7 +77,6 @@ int countFiles(FATFS *fs, char *cdir){
     int retCount=0; //returns no. of obj
     if(f_opendir(fs, &dir, cdir) != FR_OK){
         printf("Could not open directory for counting\n");
-        //notification("an error occured, pleases restart the system :(");
         exit(1);
     }
     f_rewinddir(&dir);

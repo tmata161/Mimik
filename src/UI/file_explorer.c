@@ -25,7 +25,7 @@ void pageMechanism(fileExplorerObject* exobj);
 
 
 
-//entry section of code for every page
+//entry section of code for every folder
 fileExplorerObject file_explorer(fileExplorerObject obj){
     FF_DIR gDIR; //a global directory structure variable
     fileExplorerObject exobj; //contain entries of all objects present inside a directory
@@ -75,7 +75,8 @@ void buttonInterruptFileExplorer(fileExplorerObject* exobj){
         //JOYSTICK UP
         if((!DEV_Digital_Read(JOYSTICK_UP))){
             exobj->fP[exobj->fSP]-=1;
-            exobj->fP[exobj->fSP]=(exobj->fP[exobj->fSP]==0xFFFFFFFF)?0:exobj->fP[exobj->fSP];
+            exobj->fP[exobj->fSP]=(exobj->fP[exobj->fSP]==0xFFFFFFFF)?
+                                    0 : exobj->fP[exobj->fSP];
             pageMechanism(exobj);
            // printf("file pointer: %u\nfile name: %s\n\n", exobj.fP, exobj.files[exobj.fP].fname);
             HALT(JOYSTICK_UP);
@@ -84,7 +85,9 @@ void buttonInterruptFileExplorer(fileExplorerObject* exobj){
         //JOYSTICK DOWN
         else if((!DEV_Digital_Read(JOYSTICK_DOWN))){
             exobj->fP[exobj->fSP]+=1;
-            exobj->fP[exobj->fSP]=(exobj->fP[exobj->fSP] >= exobj->TFC)?exobj->TFC-1:exobj->fP[exobj->fSP];
+            exobj->fP[exobj->fSP]=(exobj->fP[exobj->fSP] >= exobj->TFC)? \
+                                        exobj->TFC-1: \
+                                        exobj->fP[exobj->fSP];
             pageMechanism(exobj);
             //printf("file pointer: %u\nfile name: %s\n\n", exobj.fP, exobj.files[exobj.fP].fname);
             HALT(JOYSTICK_DOWN);

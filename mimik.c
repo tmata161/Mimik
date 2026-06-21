@@ -19,7 +19,7 @@ void main(){
     fileExplorerObject obj;
     obj.fSP=0;
     obj.fP[obj.fSP]=0;
-    for(int i=0; i<sizeof(obj.navigationLocation)/sizeof(char); obj.navigationLocation[i++]='\0'); //initialize the navigationLocation with null characters
+    for(int i=0; i<sizeof(obj.navigationLocation)/sizeof(char); obj.navigationLocation[i++]='\0'); //initialize the navigationLocation buffer with null characters
     obj.navigationLocation[0]='/';
     while(true){
         obj=file_explorer(obj);

@@ -18,7 +18,7 @@
 //-----------------------------------
 
 //----------------------------------File explorer-------------------------
-#define FILE_COPY_LIMIT 50 //no more than 5 files can be shown
+#define FILE_COPY_LIMIT 50 
 #define MFO 5 //maximum file occupancy
 //this object is for handling file explorer
 // this structure is made for internal system
