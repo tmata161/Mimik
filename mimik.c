@@ -10,7 +10,7 @@ void main(){
    stdio_init_all();
    printf("==========MIMIK BOOT SUCCESSFUL🦆🦆=============\n\n");
    if(!initScreen())return;
-   //drawBootLogo(); 
+   drawBootLogo(); 
    //init memory card
    if(!memory_card_init()){notification("Failed to setup  Memory Card");return;}
     board_init();

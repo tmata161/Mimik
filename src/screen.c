@@ -1,5 +1,4 @@
 #include"../mimik.h"
-#include"UI/images/bootlogo.h"
 
 UWORD* ScreenBuffer;
 
