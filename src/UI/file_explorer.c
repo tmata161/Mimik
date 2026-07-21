@@ -244,7 +244,7 @@ void handleOK(fileExplorerObject* exobj){
                 char script_buffer[(sizeof(char)*file_size)+1];
                 readFile(&fat, tempPath, file_size, script_buffer);
                 script_buffer[file_size]='\n'; //add a new line character at the end of file
-                lexer lex;
+                parser lex;
                 lex.line_number=0;
                 int counter=0;
                 bool is_first=true;
@@ -276,7 +276,7 @@ void handleOK(fileExplorerObject* exobj){
                                 lex.buffer[counter++] = script_buffer[j];
                             }
                             lex.line_number+=1;
-                            //printf("Line: %d keycode: %d instruction: %s instruction length: %d\n", lex.line_number,tmp_code, lex.buffer, counter);
+                            //ERROR("Line: %d keycode: %d instruction: %s instruction length: %d\n", lex.line_number,tmp_code, lex.buffer, counter);
                             script_injection(tmp_code, lex.buffer, counter, is_first);
                             is_first=false;
                         }
@@ -335,7 +335,7 @@ void pageMechanism(fileExplorerObject* exobj){
     drawFiles(exobj);
 }
 
-//function to handle unwanted exception
+// will get called whenever any exception occurs
 void handleException(fileExplorerObject* exobj, char* exception_message){
     notification(exception_message);
         while(true){
@@ -349,7 +349,7 @@ void handleException(fileExplorerObject* exobj, char* exception_message){
 // !-------------------------------------------------------------------------UI handler end-----------------------------
 
 
-// *------------------------------------------------------------------------filesystem logic-----------------------------
+// *------------------------------------------------------------------------file handling logic-----------------------------
 //fetch files from SD card and store it in memory
 void fetchFiles(fileExplorerObject* exobj, char* navLocation, FF_DIR* gDIR){
     exobj->total_file_count=countFiles(&fat, navLocation, gDIR);
@@ -362,10 +362,10 @@ void fetchFiles(fileExplorerObject* exobj, char* navLocation, FF_DIR* gDIR){
 }
 
 void openDirectory(FF_DIR* gDIR, char* cDir){
-    if(f_opendir(&fat, gDIR, cDir)!=FR_OK)ERROR("unable to open directory");
+    if(f_opendir(&fat, gDIR, cDir)!=FR_OK)DEBUG("unable to open directory");
 }
 
 void closeDirectory(FF_DIR* gDIR, char* cDir){
-    if(f_closedir(gDIR)!=FR_OK)ERROR("unable to close directory");
+    if(f_closedir(gDIR)!=FR_OK)DEBUG("unable to close directory");
 }
-// !------------------------------------------------------------------------filesystem logic end-----------------------------
+// !------------------------------------------------------------------------file handling logic end-----------------------------

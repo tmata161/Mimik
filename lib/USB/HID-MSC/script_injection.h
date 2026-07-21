@@ -17,7 +17,6 @@ void script_injection(int ins_code, char* instruction, int strrlen, bool first);
 void tud_exit();
 
 //------------------------including keymap here-----------------
-// a dictionary map sort of mechanism
 
 typedef struct _map{
     char *letter;
@@ -159,36 +158,12 @@ static map key_codes[]={
     {"CTRL_RIGHT", HID_KEY_CONTROL_RIGHT, HID_KEY_NONE},
     {"SHIFT_RIGHT", HID_KEY_SHIFT_RIGHT, HID_KEY_NONE},
     {"ALT_RIGHT", HID_KEY_ALT_RIGHT, HID_KEY_NONE},
-    //---------------system commands(MADE FOR WINDOWS /some can work on linux)-------------
+    //---------------system commands-------------
     {"POWEROFF", HID_KEY_POWER, HID_KEY_NONE},
     {"SLEEP",HID_USAGE_DESKTOP_SYSTEM_SLEEP, HID_KEY_NONE},
     {"MUTE", HID_KEY_MUTE, HID_KEY_NONE}
     
 };
-
-// const map2 special_keys[]={
-//     {"!", HID_KEY_SHIFT_LEFT, HID_KEY_1},
-//     {"@", HID_KEY_SHIFT_LEFT, HID_KEY_2},
-//     {"#", HID_KEY_SHIFT_LEFT, HID_KEY_3},
-//     {"$", HID_KEY_SHIFT_LEFT, HID_KEY_4},
-//     {"%", HID_KEY_SHIFT_LEFT, HID_KEY_5},
-//     {"^", HID_KEY_SHIFT_LEFT, HID_KEY_6},
-//     {"&", HID_KEY_SHIFT_LEFT, HID_KEY_7},
-//     {"*", HID_KEY_SHIFT_LEFT, HID_KEY_8},
-//     {"(", HID_KEY_SHIFT_LEFT, HID_KEY_9},
-//     {")", HID_KEY_SHIFT_LEFT, HID_KEY_0},
-
-//     {"~", HID_KEY_SHIFT_LEFT, HID_KEY_GRAVE},
-//     {"{", HID_KEY_SHIFT_LEFT, HID_KEY_BRACKET_LEFT},
-//     {"}", HID_KEY_SHIFT_LEFT, HID_KEY_BRACKET_RIGHT},
-//     {":", HID_KEY_SHIFT_LEFT, HID_KEY_SEMICOLON},
-//     {"\"", HID_KEY_SHIFT_LEFT, HID_KEY_APOSTROPHE},
-//     {"|", HID_KEY_SHIFT_LEFT, HID_KEY_BACKSLASH},
-//     {"<", HID_KEY_SHIFT_LEFT, HID_KEY_COMMA},
-//     {">", HID_KEY_SHIFT_LEFT, HID_KEY_PERIOD},
-//     {"?", HID_KEY_SHIFT_LEFT, HID_KEY_SLASH},
-//     {"_", HID_KEY_SHIFT_LEFT, HID_KEY_MINUS}
-// };
 
 #define key_length (sizeof(key_codes)/sizeof(map))
 map get_key_code(char *keycharacters);

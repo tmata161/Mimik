@@ -18,29 +18,25 @@
 #define IMAGE_SIZE SCREEN_HEIGHT*SCREEN_WIDTH
 
 //Button definition
-#define OK 15  //aka A
-#define USB_MODE 17 //aka B [will set later]
-#define SET 19 //aka X [setting page]
-#define ESC 21 //aka Y 
+#define OK 15 
+#define USB_MODE 17 //usb device mode
+#define SET 19 //settings
+#define ESC 21 //back
 
 #define JOYSTICK_UP 2
 #define JOYSTICK_DOWN 18
 #define SUBMIT LCD_1IN3_Display
 
-#define FILECAP 5
 
 //..............................
 // Custom Macro definition
-    #define ERROR printf
+    #define DEBUG printf
 //..............................
 
 //----------Variable Declaration-----------
 extern UWORD* ScreenBuffer ;
 extern FATFS fat;
 //---------------------------------------
-
-//-----------Structure Declaration--------
-
 
 //----------Screen function Declaration---------
 int initScreen();
