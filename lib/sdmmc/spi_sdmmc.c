@@ -5,7 +5,7 @@ This library is derived from ChaN's FatFs - Generic FAT Filesystem Module.
 #include "stdlib.h"
 #include "pico/stdlib.h"
 #include "spi_sdmmc.h"
-#include "../USB/Media_Storage/storage_driver.h"
+#include "../USB/HID-MSC/storage_driver.h"
 
 
 #define SDMMC_CD 0 // card detect

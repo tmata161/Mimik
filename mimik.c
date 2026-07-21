@@ -9,19 +9,21 @@ FATFS fat;
 void main(){
    stdio_init_all();
    printf("==========MIMIK BOOT SUCCESSFUL🦆🦆=============\n\n");
-   initScreen();
-
+   if(!initScreen())return;
+   //drawBootLogo(); 
    //init memory card
-   memory_card_init();
-
+   if(!memory_card_init()){notification("Failed to setup  Memory Card");return;}
+    board_init();
    // initialize file system objects
     initFilesystem(&fat);
     fileExplorerObject obj;
-    obj.fSP=0;
-    obj.fP[obj.fSP]=0;
+    obj.index_of_gfp=0;
+    obj.global_file_pointer[obj.index_of_gfp]=0;
+    obj.return_back=1;//memory efficient code
     for(int i=0; i<sizeof(obj.navigationLocation)/sizeof(char); obj.navigationLocation[i++]='\0'); //initialize the navigationLocation buffer with null characters
     obj.navigationLocation[0]='/';
-    while(true){
+    while(obj.return_back){
         obj=file_explorer(obj);
     }
+    mount_as_usb_flash(&fat);
 }

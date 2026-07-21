@@ -10,16 +10,16 @@
 #include"pico/stdlib.h"
 #include <string.h>
 
-#include"lib/USB/Media_Storage/media_storage.h"
+#include"lib/USB/HID-MSC/media_storage.h"
 
 
-#define SCREEN_HEIGHT LCD_1IN3_HEIGHT
-#define SCREEN_WIDTH LCD_1IN3_WIDTH
+#define SCREEN_HEIGHT (LCD_1IN3_HEIGHT)
+#define SCREEN_WIDTH (LCD_1IN3_WIDTH)
 #define IMAGE_SIZE SCREEN_HEIGHT*SCREEN_WIDTH
 
 //Button definition
 #define OK 15  //aka A
-#define NONE 17 //aka B [will set later]
+#define USB_MODE 17 //aka B [will set later]
 #define SET 19 //aka X [setting page]
 #define ESC 21 //aka Y 
 
@@ -43,7 +43,7 @@ extern FATFS fat;
 
 
 //----------Screen function Declaration---------
-void initScreen();
+int initScreen();
 UWORD* allocateScreenBuffer();
 void de_allocateScreenBuffer();
 void drawBootLogo();
