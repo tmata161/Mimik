@@ -10,11 +10,11 @@ cmake -B build
 make -j
 
 # List of commands (for now)
-PRESS: presses max 2 keys at a time
-TYPE: for typing
+PRESS: presses max 2 keys at a time\
+TYPE: for typing\
 DELAY: delay for (ms)
 
-[All the commands are not case sensitive]
+[All commands keys are not case sensitive]
 
 # List of Keys supported
 **Character keys**\
