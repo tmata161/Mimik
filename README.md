@@ -1,5 +1,6 @@
 # Project Mimik
 Hello internet this is my first embedded project.
+
 Mimik is a simple script injection device that acts as a Human Interface Device(HID) when plugged in to a computer.
 
 # Build guide
@@ -16,46 +17,46 @@ DELAY: delay for (ms)
 [All the commands are not case sensitive]
 
 # List of Keys supported
-**Character keys**
-    a-z
-    A-Z
-    0-9
-    F1-F12
-    Other character keys
+**Character keys**\
+&emsp;    a-z\
+&emsp;    A-Z\
+&emsp;    0-9\
+&emsp;    F1-F12\
+&emsp;    Other character keys
 
-**Modifier keys**
-    SHIFT
-    ALT
-    CTRL    
-    ENTER
-    ESCAPE
-    BACKSPACE
-    TAB
-    CAPS_LOCK
-    SHIFT
-    PRINT_SCREEN
-    SCROLL_LOCK
-    PAUSE
-    INSERT
-    HOME
-    PG_UP
-    DEL
-    END 
-    PG_DOWN
-    ARROW_RIGHT
-    ARROW_LEFT
-    ARROW_DOWN
-    ARROW_UP
-    NUM_LOCK
-    CTRL_LEFT
-    SHIFT_LEFT
-    ALT_LEFT
-    OS
-    CTRL_RIGHT
-    SHIFT_RIGHT
-    ALT_RIGHT
+**Modifier keys**\
+&emsp;    SHIFT\
+&emsp;    ALT\
+&emsp;    CTRL    \
+&emsp;    ENTER\
+&emsp;    ESCAPE\
+&emsp;    BACKSPACE\
+&emsp;    TAB\
+&emsp;    CAPS_LOCK\
+&emsp;    SHIFT\
+&emsp;    PRINT_SCREEN\
+&emsp;    SCROLL_LOCK\
+&emsp;    PAUSE\
+&emsp;    INSERT\
+&emsp;    HOME\
+&emsp;    PG_UP\
+&emsp;    DEL\
+&emsp;    END \
+&emsp;    PG_DOWN\
+&emsp;    ARROW_RIGHT\
+&emsp;    ARROW_LEFT\
+&emsp;    ARROW_DOWN\
+&emsp;    ARROW_UP\
+&emsp;    NUM_LOCK\
+&emsp;    CTRL_LEFT\
+&emsp;    SHIFT_LEFT\
+&emsp;    ALT_LEFT\
+&emsp;    OS\
+&emsp;    CTRL_RIGHT\
+&emsp;    SHIFT_RIGHT\
+&emsp;    ALT_RIGHT
 
-**Special keys**
-    POWEROFF
-    SLEEP
-    MUTE   
+**Special keys**\
+&emsp;    POWEROFF\
+&emsp;    SLEEP\
+&emsp;    MUTE\
