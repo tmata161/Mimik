@@ -1,5 +1,6 @@
 .vscode/
 
 build/
-
-/Functions_to_implement[Theek karna hai].txt
+deploy
+reset
+run
