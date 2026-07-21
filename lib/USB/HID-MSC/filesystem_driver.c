@@ -7,6 +7,7 @@
 #define Y 21
 
 const int gpios[] = {4,5,6,7};
+
 //----------------------------filesystem helper functions resides here-------------------
 FRESULT initFilesystem(FATFS* fatsys){
     uint8_t work[FF_MAX_SS];
@@ -37,15 +38,25 @@ FRESULT initFilesystem(FATFS* fatsys){
 }
 
 //read contents of the file
-char* readFile(FATFS* fatsys, char* fileName, int fileSize){
-    FIL fp;
-    FILINFO finfo;
-    char* filCont=(char *)malloc(fileSize);
-    memset(filCont, '\0', fileSize);
-    f_open(fatsys, &fp, fileName, FA_READ);
-    f_read(&fp, filCont, fileSize, 0);
-    f_close(&fp);
-    return filCont;
+//return code {0:read uncessful; 1:read successful}
+int readFile(FATFS* fs, char* fileName, int fileSize, char* databuffer){
+    FIL file;
+    FILINFO f_info;
+    UINT ptr=0; //keeps track of bytes left to read
+    f_open(fs, &file, fileName, FA_READ);
+    if(&file==NULL){
+        printf("could not open file\n");
+        return 0;
+    }
+
+    while(1)
+    {
+        f_read(&file, (char*) databuffer, fileSize, &ptr);
+        if(ptr==0) break;
+    }
+    f_rewind(&file);
+    f_close(&file);
+    return 1;
 }
 
 //write content to a file
@@ -59,50 +70,72 @@ FRESULT writeFile(FATFS *fs, char *filename, char *buffer, UINT bufsize){
     return FR_OK;
 }
 
-/* return file size 
-   if any problem, return -1
-*/
-int file_size(FATFS *fs, char *filename){
-    FILINFO fil_info;
-    FRESULT result;
-    result = f_stat(fs, filename, &fil_info);
-    if(result == FR_OK) return fil_info.fsize;
-    else {printf("could not get file size\n"); return -1;}
+//open file and checks for the size of file
+//return code: -1{error in file opening}
+int get_file_size(FATFS *fs, char *filepath){
+    FILINFO file_info;
+    FIL file;
+
+    if(f_open(fs, &file, filepath, FA_READ)!=FR_OK){
+        printf("could not open file (get_file_size)\n");
+        return -1;
+    }
+
+    if(f_stat(fs, filepath, &file_info) != FR_OK){
+        printf("could not get file size (get_file_size)\n");
+        file_info.fsize=-1;
+    }
+    //should close file before function end
+    f_rewind(&file);
+    f_close(&file);
+    return file_info.fsize;
 }
 
-//returns number of files present in a directory (ending with extension .mik)
-int countFiles(FATFS *fs, char *cdir){
-    FF_DIR dir;
+//returns number of files present in a directory
+int countFiles(FATFS *fs, char *navLocation, FF_DIR *dir){
+    //FF_DIR dir;
     FILINFO finfo;
     int retCount=0; //returns no. of obj
-    if(f_opendir(fs, &dir, cdir) != FR_OK){
-        printf("Could not open directory for counting\n");
-        //notification("an error occured, pleases restart the system :(");
-        exit(1);
-    }
-    f_rewinddir(&dir);
-    while(f_readdir(&dir, &finfo) == FR_OK && finfo.fname[0]!=0){
-        //do not count . and ..
-        if((strcmp(finfo.fname, ".")!=0 || strcmp(finfo.fname, "..")!=0) && (finfo.fname[0]!='.')){
-            if(finfo.fattrib==AM_ARC || finfo.fattrib==AM_DIR) //only if is a file and extension matches OR is a directory
+    //directory is already opened
+    while(f_readdir(dir, &finfo) == FR_OK && finfo.fname[0]!='\0'){
+        //do not count . and .. or any file starting with .
+        if(finfo.fname[0]!='.'){
+            //count only file and directory
+            if(finfo.fattrib==AM_ARC || finfo.fattrib==AM_DIR){
                 retCount++;
+            }
         }
        
     }
+    f_rewinddir(dir);
     return retCount;
 }
 
-// copies 50 file entries from external storage into memory
+// copies 50 files from a given folder into memory
 void copyFiles(FATFS *fs, char *folder,FF_DIR* directoryPointer, FILINFO* fileInfo){
     // directory is already opened  
+    f_rewinddir(directoryPointer);
     int fileCounter=0; //copy only 50 file names into memory
     FILINFO temp;
     while(f_readdir(directoryPointer, &temp) == FR_OK && temp.fname[0]!=0 && fileCounter<50){
-        if(temp.fattrib == AM_ARC || (temp.fattrib==AM_DIR && (temp.fname[0]!='.'))){
+        if(temp.fname[0]!='.')
+            if(temp.fattrib == AM_ARC || temp.fattrib==AM_DIR){
                 fileInfo[fileCounter]=temp;
                 fileCounter++;
             }
         }
+}
+
+//checks the file ends with
+int endsWith(char* filename, char* sequence){
+    int len=strlen(filename);
+    //returns true if certain sequence of characters are present in filename
+    return (strstr(filename, sequence)!=NULL)?1:0;
+}
+
+//checks if the file is valid text file
+int isValidFile(char* filename){
+    //open the file and read 50 bytes from it (all the 50 bytes should be simple english character)
 }
 //-----------------------filesystem helper functions end---------------------------------
 
@@ -118,33 +151,19 @@ void copyFiles(FATFS *fs, char *folder,FF_DIR* directoryPointer, FILINFO* fileIn
 //--------------------------------
 
 
-// void initTUDmsc(){
-//     //noise ..
-//     for(int i=0;i<4;i++){
-//         gpio_init(gpios[i]);
-//         gpio_set_dir(gpios[i], GPIO_OUT);
-//         gpio_put(gpios[i], 0);
-//     }
-//     for(int i=0;i<4;i++){
-//         gpio_put(gpios[i], 1);
-//     }
-//     board_delay(5000);
-//     storage_driver_init();
-//     board_init();
-//     tud_init(BOARD_TUD_RHPORT);
+void initTUDmsc(){
     
-//     //only for testing
-//     gpio_init(Y);
-//     gpio_pull_up(Y);
-//     gpio_set_dir(Y, GPIO_IN);
-//     //------------------
-//     while (1)
-//     {
-//             interrupt_reset_request();
-//             tud_task();
-//             led_blinking_task();
-//         //tud_cdc_available();
-//     }
+    board_delay(5000);
+    //storage_driver_init();
+    tud_init(BOARD_TUD_RHPORT);
+    //------------------
+    while (1)
+    {
+            //interrupt_reset_request();
+            tud_task();
+            led_blinking_task();
+        //tud_cdc_available();
+    }
     
-// }
+}
 //----------------------TUD code end------------------------

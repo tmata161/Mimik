@@ -5,7 +5,7 @@ This library is derived from ChaN's FatFs - Generic FAT Filesystem Module.
 #define SPI_SDMMC_H
 #include "hardware/spi.h"
 #include "hardware/dma.h"
-//#define __SPI_SDMMC_DMA
+#define __SPI_SDMMC_DMA
 
 // GPIO 4-> RX MISO | GPIO 7-> TX MOSI
 /* SDMMC SPI pins*/
@@ -40,7 +40,6 @@ This library is derived from ChaN's FatFs - Generic FAT Filesystem Module.
 
 #define SDMMC_SECT_SIZE 512
 
-#define __SPI_SDMMC_DMA 1
 
 typedef struct {
     spi_inst_t *spiPort;

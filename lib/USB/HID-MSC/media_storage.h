@@ -41,19 +41,20 @@ DRESULT disk_ioctl (void *drv, BYTE cmd, void* buff);
 
 
 FRESULT initFilesystem(FATFS* fatsys);
-char* readFile(FATFS* fatsys, char* fileName, int fileSize);
-int file_size(FATFS *fs, char *filename);
+int readFile(FATFS* fs, char* fileName, int fileSize, char* databuffer);
+int get_file_size(FATFS *fs, char *filename);
 FRESULT writeFile(FATFS *fs, char *filename, char *buffer, UINT bufsize);
 void initTUDmsc();
 void copyFiles(FATFS *fs, char *folder,FF_DIR* directoryPointer, FILINFO* fileInfo);
-int countFiles(FATFS *fs, char *cdir); //returns no. of entries present inside a folder
+int endsWith(char* filename, char* sequence);
+int countFiles(FATFS *fs, char *cdir, FF_DIR *dir); //returns no. of entries present inside a folder
 
 uint8_t sdmmc_disk_initialize(spi_inst_t *spi, uint cs_pin, sdmmc_data_t *sdmmc);
 unsigned int memory_card_init(void);
 unsigned int detectCard();
 
 //new function
-void mount_as_usb_flash();
+void mount_as_usb_flash(FATFS* fat);
 //------------Function Declaration End-------
 #endif
 

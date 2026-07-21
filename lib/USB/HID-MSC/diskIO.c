@@ -27,16 +27,14 @@
 
 #include "media_storage.h"
 #include "hardware/flash.h"
+#include "hardware/watchdog.h"
 
 
-// #define PICO_SIZE 2*1024*1024
-// #define FAT 128*1024
-// const char* baseSize = (char*) (PICO_SIZE - FAT);
-// const int sectorSize=512;
-// const int sectorCount=FAT/sectorSize;
-// char* fatdata=(char*)(XIP_NOCACHE_NOALLOC_BASE+(PICO_FLASH_SIZE_BYTES-FAT));
 
 sdmmc_data_t pSDMMC;
+int is_test_ready=0;
+bool eject=false;
+FATFS* this_fat;
 
 unsigned int memory_card_init() {
   pSDMMC.spiInit=false;
@@ -44,7 +42,6 @@ unsigned int memory_card_init() {
   pSDMMC.dmaInit=false;
 #endif
 int ret = sdmmc_disk_initialize(SDMMC_SPI_PORT, SDMMC_PIN_CS, &pSDMMC);
-printf("sdmmc initialization code: %d\n", ret);
 return (ret==1)?1:0;
 }
 
@@ -72,14 +69,15 @@ void tud_msc_inquiry_cb(uint8_t lun, uint8_t vendor_id[8], uint8_t product_id[16
     memcpy(product_id, pid, strlen(pid));
     memcpy(product_rev, rev, strlen(rev));
 }
-
+bool test=false;
 // Invoked when received Test Unit Ready command.
 // return true allowing host to read/write this LUN e.g SD card inserted
 bool tud_msc_test_unit_ready_cb(uint8_t lun)
 {
-  return true; // RAM disk is always ready
+  if(is_test_ready)return true;
+  if(eject)test=true;
+  return false; 
 }
-
 // Invoked when received SCSI_CMD_READ_CAPACITY_10 and SCSI_CMD_READ_FORMAT_CAPACITY to determine the disk size
 // Application update block count and block size
 void tud_msc_capacity_cb(uint8_t lun, uint32_t* block_count, uint16_t* block_size)
@@ -96,31 +94,39 @@ bool tud_msc_start_stop_cb(uint8_t lun, uint8_t power_condition, bool start, boo
   (void) lun;
   (void) power_condition;
 
-  // if ( load_eject )
-  // {
-  //   if (start)
-  //   {
-  //     // load disk storage
-  //   }else
-  //   {
-  //     // unload disk storage
-  //   }
-  // }
+  if ( load_eject )
+  {
+    if (start)
+    {
+      return true;
+    }
+    else
+    {
+      printf("eject command issued\n");
+     // tud_deinit(0);
+      while(f_umount(this_fat)!=FR_OK);
+      //watchdog_reboot(0,0,0);
+      is_test_ready=0;
+      eject=true;
+      return false;
+    }
+  }
 
-  return true;
+  return false;
 }
 
 // Callback invoked when received READ10 command.
 // Copy disk's data to buffer (up to bufsize) and return number of copied bytes.
 int32_t tud_msc_read10_cb(uint8_t lun, uint32_t lba, uint32_t offset, void* buffer, uint32_t bufsize)
 {
-  if(disk_read(&lun,buffer, lba, 1)!=RES_OK)return -1;
+  if(disk_read(&lun,buffer, lba+offset , bufsize)!=RES_OK)return -1;
   return (int32_t) bufsize;
 }
 
 bool tud_msc_is_writable_cb (uint8_t lun)
 {
-  return true;
+  if(pSDMMC.Stat)return true;
+  return false;
 }
 
 // Callback invoked when received WRITE10 command.
@@ -128,7 +134,7 @@ bool tud_msc_is_writable_cb (uint8_t lun)
 int32_t tud_msc_write10_cb(uint8_t lun, uint32_t lba, uint32_t offset, uint8_t* buffer, uint32_t bufsize)
 {
 
- if(disk_write(&lun, buffer, lba, 1) != RES_OK) return -1;
+ if(disk_write(&lun, buffer, lba+offset , bufsize) != RES_OK) return -1;
  return (int32_t) bufsize;
 }
 
@@ -144,9 +150,10 @@ int32_t tud_msc_scsi_cb (uint8_t lun, uint8_t const scsi_cmd[16], void* buffer, 
 
   // most scsi handled is input
   bool in_xfer = true;
-
+  //for(int i=0; i<16; i++)printf("tud scsi command %d: %x\n", (i+1), scsi_cmd[i]);
   switch (scsi_cmd[0])
   {
+    
     default:
       // Set Sense = Invalid Command Operation
       tud_msc_set_sense(lun, SCSI_SENSE_ILLEGAL_REQUEST, 0x20, 0x00);
@@ -180,11 +187,11 @@ void led_blinking_task(void)
   static bool led_state = false;
 
   // Blink every interval ms
-  if ( board_millis() - start_ms < 50) return; // not enough time
-  start_ms += 50;
+  if ( board_millis() - start_ms < 100) return; // not enough time
+  start_ms += 100;
 
   gpio_put(LED_BLINKING_PIN,led_state);
-  led_state = 1 - led_state; // toggle
+  led_state = 1-led_state; // toggle
 }
 
 void led_blinking_task_off(void) {
@@ -195,24 +202,21 @@ void led_blinking_task_off(void) {
 
 DRESULT disk_read (void *drv, BYTE* buff, DWORD sector, UINT count)
 {
-  if (!sdmmc_read_sector(sector, buff, SDMMC_SECT_SIZE, &pSDMMC)) return RES_ERROR;
+  if (!sdmmc_read_sector(sector, buff, count, &pSDMMC)) return RES_ERROR;
   return RES_OK;
 }
 
 DRESULT disk_write (void *drv, const BYTE* buff, DWORD sector, UINT count)
 {
-  //printf("disk write callback: sector-> %d\n", sector);
   uint32_t ints = save_and_disable_interrupts();
-if (!sdmmc_write_sector(sector, (uint8_t *) buff, SDMMC_SECT_SIZE, &pSDMMC)) return RES_ERROR;
-restore_interrupts(ints);
-return RES_OK;
+  if (!sdmmc_write_sector(sector, (uint8_t *) buff, count, &pSDMMC)) return RES_ERROR;
+  restore_interrupts(ints);
+  return RES_OK;
 }
 
 DRESULT disk_ioctl (void *drv, BYTE cmd, void* buff)
 {
- // printf("disk io control callback\n");
 switch(cmd){
-  
   case CTRL_SYNC:
     return RES_OK;
     break;
@@ -238,16 +242,27 @@ switch(cmd){
 
   case IOCTL_STATUS:
   *(DSTATUS*)buff=RES_OK;
-  return RES_OK;
+  return (!pSDMMC.Stat);
   break;
 }
 return RES_ERROR;
 }
 
-void mount_as_usb_flash(){
-  tud_init(BOARD_TUD_RHPORT);
+
+//lets check callback function
+void tud_mount_cb(void){}
+// Invoked when device is unmounted
+void tud_umount_cb(void){
+  
+}
+
+void mount_as_usb_flash(FATFS *fat){
+  this_fat=fat;
+  tusb_init(BOARD_TUD_RHPORT);
+  is_test_ready=1;
   while(1){
     tud_task();
-    //cdc_task();
+    if(eject && test) break;
   }
+  watchdog_reboot(0,0,0);
 }
