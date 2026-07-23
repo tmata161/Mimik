@@ -97,11 +97,11 @@ void script_injection(int ins_code, char* instruction, int str_len, bool first){
                 repeat = atoi(instruction);
                 return; //re
             default:
-                printf("Unknown instruction\n");
+                DEBUG("Unknown instruction\n");
                 break;
             }
             tud_task();
-            printf("code %d, instruction: %s, repeatation %d\n", ins_code, instruction, repeat);
+            DEBUG("code %d, instruction: %s, repeatation %d\n", ins_code, instruction, repeat);
     }
     repeat--;
 }
@@ -147,9 +147,7 @@ void capslock_off(){
 // Application can use this to send the next report
 // Note: For composite reports, report[0] is report ID
 void tud_hid_report_complete_cb(uint8_t instance, uint8_t const* report, uint16_t len)
-{
-    //printf("%d\n", report[1]);
-    return;}
+{return;}
 
 // Invoked when received GET_REPORT control request
 // Application must fill buffer report's content and return its length.

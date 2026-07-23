@@ -8,7 +8,7 @@
 FATFS fat;
 void main(){
    stdio_init_all();
-   printf("==========MIMIK BOOT SUCCESSFUL🦆🦆=============\n\n");
+   DEBUG("==========MIMIK BOOT SUCCESSFUL🦆🦆=============\n\n");
    if(!initScreen())return;
    drawBootLogo(); 
    //init memory card

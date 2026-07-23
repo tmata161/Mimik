@@ -12,7 +12,8 @@ make -j
 # List of commands (for now)
 PRESS: presses max 2 keys at a time\
 TYPE: for typing\
-DELAY: delay for (ms)
+DELAY: delay for (ms)\
+REPEAT n: repeat the next following line for (n) times
 
 [All commands keys are not case sensitive]
 

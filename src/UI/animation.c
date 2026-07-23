@@ -28,7 +28,6 @@ void update_animation(){
         board_delay(200);
         SUBMIT(ScreenBuffer);
     }
-    printf("core 1 exit\n");
     return;
 }
 

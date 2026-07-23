@@ -102,7 +102,7 @@ bool tud_msc_start_stop_cb(uint8_t lun, uint8_t power_condition, bool start, boo
     }
     else
     {
-      printf("eject command issued\n");
+      DEBUG("eject command issued\n");
      // tud_deinit(0);
       while(f_umount(this_fat)!=FR_OK);
       //watchdog_reboot(0,0,0);
@@ -150,7 +150,6 @@ int32_t tud_msc_scsi_cb (uint8_t lun, uint8_t const scsi_cmd[16], void* buffer, 
 
   // most scsi handled is input
   bool in_xfer = true;
-  //for(int i=0; i<16; i++)printf("tud scsi command %d: %x\n", (i+1), scsi_cmd[i]);
   switch (scsi_cmd[0])
   {
     

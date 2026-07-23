@@ -14,24 +14,24 @@ FRESULT initFilesystem(FATFS* fatsys){
     FRESULT res;
     
       if (f_mount(fatsys)!=FR_OK){
-        printf("FAT:Unable to mount , attempting to format\n");
+        DEBUG("FAT:Unable to mount , attempting to format\n");
 
         if(f_mkfs(fatsys, FM_FAT, 0 , work, sizeof(work))!=FR_OK) {
-            printf("FAT:Format Unsuccessful turning down system\n");
+            DEBUG("FAT:Format Unsuccessful turning down system\n");
             exit(1);
             }
         else {
-            printf("FAT:Format Successful , trying to mount system again");
+            DEBUG("FAT:Format Successful , trying to mount system again");
             if(f_mount(fatsys)!=FR_OK){
-                printf("FAT:Unable to mount again, turning down system\n"); return FR_DISK_ERR;
+                DEBUG("FAT:Unable to mount again, turning down system\n"); return FR_DISK_ERR;
                 }
             else{
-                printf("FAT:Mount Successful\n");
+                DEBUG("FAT:Mount Successful\n");
             }    
             }
       }
       else {
-        printf("FAT mount Successful\n");
+        DEBUG("FAT mount Successful\n");
         }
 
      return FR_OK;
@@ -45,7 +45,7 @@ int readFile(FATFS* fs, char* fileName, int fileSize, char* databuffer){
     UINT ptr=0; //keeps track of bytes left to read
     f_open(fs, &file, fileName, FA_READ);
     if(&file==NULL){
-        printf("could not open file\n");
+        DEBUG("could not open file\n");
         return 0;
     }
 
@@ -77,12 +77,12 @@ int get_file_size(FATFS *fs, char *filepath){
     FIL file;
 
     if(f_open(fs, &file, filepath, FA_READ)!=FR_OK){
-        printf("could not open file (get_file_size)\n");
+        DEBUG("could not open file (get_file_size)\n");
         return -1;
     }
 
     if(f_stat(fs, filepath, &file_info) != FR_OK){
-        printf("could not get file size (get_file_size)\n");
+        DEBUG("could not get file size (get_file_size)\n");
         file_info.fsize=-1;
     }
     //should close file before function end

@@ -2,7 +2,7 @@
 #define _STORAGE_DRIVER_H_
 /* used by my project */
 
-
+#define DEBUG printf
 #define SPI_BAUDRATE_LOW (1000*1000)
 #define SPI_BAUDRATE_HIGH (60*1000*1000)
 

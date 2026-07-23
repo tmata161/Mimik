@@ -41,12 +41,6 @@ fileExplorerObject file_explorer(fileExplorerObject obj){
     openDirectory(&gDIR, exobj.navigationLocation);
     fetchFiles(&exobj, exobj.navigationLocation, &gDIR);
 
-    //only for testing
-    // printf("Total Files in %s : %d\n",exobj.navigationLocation, exobj.total_file_count);
-    // for(int i=0; i<exobj.total_file_count; i++){
-    //     printf("%d\t%s\n", i, exobj.files[i].fname);
-    // }printf("\n");
-    //xxxxxxxxxxxxxxxx
 
     if(exobj.total_file_count==0){
         notification("empty folder");
@@ -85,7 +79,6 @@ void buttonInterruptFileExplorer(fileExplorerObject* exobj){
             exobj->global_file_pointer[exobj->index_of_gfp]=(exobj->global_file_pointer[exobj->index_of_gfp]==0xFFFFFFFF)?
                                     exobj->total_file_count-1 : exobj->global_file_pointer[exobj->index_of_gfp];
             pageMechanism(exobj);
-           // printf("file pointer: %u\nfile name: %s\n\n", exobj.fP, exobj.files[exobj.fP].fname);
             HALT(JOYSTICK_UP);
         }
 
@@ -96,13 +89,11 @@ void buttonInterruptFileExplorer(fileExplorerObject* exobj){
                                         0: \
                                         exobj->global_file_pointer[exobj->index_of_gfp];
             pageMechanism(exobj);
-            //printf("file pointer: %u\nfile name: %s\n\n", exobj.fP, exobj.files[exobj.fP].fname);
             HALT(JOYSTICK_DOWN);
         }
 
         //OK
         else if((!DEV_Digital_Read(OK))){
-            printf("ok called: %s\n", exobj->navigationLocation);
             handleOK(exobj);
             HALT(OK);
             break;
@@ -118,7 +109,6 @@ void buttonInterruptFileExplorer(fileExplorerObject* exobj){
 
         //ESC
         else if((!DEV_Digital_Read(ESC))){
-            printf("esc called: %s\n", exobj->navigationLocation);
             handleESC(exobj);
             HALT(ESC);
             break;
@@ -219,14 +209,13 @@ void handleOK(fileExplorerObject* exobj){
             // check if its a .mik file
             int is_valid = endsWith(temp_file_info.fname, ".mik");
             if(!is_valid){
-                notification("Not a valid script file");
+                notification("Not a valid script   file");
                 DEV_Delay_ms(1500);
                 return;
             }
             
             //check if it is a text file and within memory bounds
             int file_size = get_file_size(&fat, tempPath);
-            printf("file size of %s is %d\n", tempPath, file_size);
             if(file_size>FILE_SIZE_LIMIT || file_size==0)
             {
                 char message[55];
@@ -327,7 +316,7 @@ void pageMechanism(fileExplorerObject* exobj){
     exobj->slate_no=(int)(exobj->global_file_pointer[exobj->index_of_gfp]/MAX_FILE_LIMIT);
     //upper bound and lower bound calculations
     exobj->lower_bound = exobj->slate_no * MAX_FILE_LIMIT;
-    int diff = exobj->total_file_count-exobj->lower_bound;
+    int diff = exobj->total_file_count - exobj->lower_bound;
     exobj->upper_bound = (diff>4)?\
                             exobj->lower_bound + 4:\
                             exobj->total_file_count-1;

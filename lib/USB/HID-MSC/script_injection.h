@@ -13,6 +13,8 @@
 #include "pico/bootrom.h"
 #include "pico/stdio.h"
 
+#define DEBUG printf
+
 void script_injection(int ins_code, char* instruction, int strrlen, bool first);
 void tud_exit();
 

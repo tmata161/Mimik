@@ -28,8 +28,6 @@ void Paint_NewImage(UBYTE *image, UWORD Width, UWORD Height, UWORD Rotate, UWORD
 
     Paint.WidthByte = (Width % 8 == 0) ? (Width / 8) : (Width / 8 + 1);
     Paint.HeightByte = Height;
-    //    printf("WidthByte = %d, HeightByte = %d\r\n", Paint.WidthByte, Paint.HeightByte);
-    //    printf(" LCD_WIDTH / 8 = %d\r\n",  122 / 8);
 
     Paint.Rotate = Rotate;
     Paint.Mirror = MIRROR_NONE;
@@ -312,7 +310,7 @@ void Paint_DrawPoint(UWORD Xpoint, UWORD Ypoint, UWORD Color,
             {
                 if (Xpoint + XDir_Num - Dot_Pixel < 0 || Ypoint + YDir_Num - Dot_Pixel < 0)
                     break;
-                // printf("x = %d, y = %d\r\n", Xpoint + XDir_Num - Dot_Pixel, Ypoint + YDir_Num - Dot_Pixel);
+                printf("x = %d, y = %d\r\n", Xpoint + XDir_Num - Dot_Pixel, Ypoint + YDir_Num - Dot_Pixel);
                 Paint_SetPixel(Xpoint + XDir_Num - Dot_Pixel, Ypoint + YDir_Num - Dot_Pixel, Color);
             }
         }
