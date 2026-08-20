@@ -227,7 +227,6 @@ void handleOK(fileExplorerObject* exobj){
             //do the script injection thing
             else{
                 //---------injection animation------
-                //start_animation("INJECTING PAYLOAD");
                 notification("INJECTING PAYLOAD");
                 //---------------------------------
                 char script_buffer[(sizeof(char)*file_size)+1];
@@ -289,7 +288,7 @@ void handleOK(fileExplorerObject* exobj){
 // draw files on the screen
 void drawFiles(fileExplorerObject* exobj){
     int height=20;
-    Paint_DrawRectangle(45+5, 10+5, SCREEN_HEIGHT-5, SCREEN_WIDTH-5, BACKGROUND , DOT_PIXEL_1X1, DRAW_FILL_FULL); //draw outline rectangle
+    //Paint_DrawRectangle(45+5, 10+5, SCREEN_HEIGHT-5, SCREEN_WIDTH-5, BACKGROUND , DOT_PIXEL_1X1, DRAW_FILL_FULL); //draw outline rectangle
     for(int i=exobj->lower_bound; i<=exobj->upper_bound; i++){
         Paint_DrawString_EN(60, height, exobj->files[i].fname , \
             (i==exobj->global_file_pointer[exobj->index_of_gfp])?\
@@ -320,6 +319,7 @@ void pageMechanism(fileExplorerObject* exobj){
     exobj->upper_bound = (diff>4)?\
                             exobj->lower_bound + 4:\
                             exobj->total_file_count-1;
+    Paint_Clear(BACKGROUND);
     drawMenuTray();
     drawFiles(exobj);
 }

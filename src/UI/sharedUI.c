@@ -3,7 +3,8 @@
 
 const char menuItems[][5]={"OK", "---", "SET", "ESC"};
 // draw menu tray at side
-void drawMenuTray(){
+void drawMenuTray(){//45, 10
+    //Paint_DrawRectangle(45, 10, SCREEN_HEIGHT-100, SCREEN_WIDTH-100, GREEN , DOT_PIXEL_1X1, DRAW_FILL_EMPTY);
     Paint_DrawRectangle(45, 10, SCREEN_HEIGHT, SCREEN_WIDTH, GREEN , DOT_PIXEL_1X1, DRAW_FILL_EMPTY);
     Paint_DrawImage(OK_button, 0, 10,  40, 40);
     Paint_DrawImage(usb_button, 1, 71, 40, 40);
